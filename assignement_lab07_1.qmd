@@ -1,5 +1,5 @@
 ---
-title: "Lab 6 Assignement: Group 20"
+title: "Lab 7 Assignement: Group 20"
 author: Antoine Andréoletti (s242830), Olivier Gaufrès (243252), Amy Surry (201902), Lea Skytthe (s203531), Trine Søgaard (s204655)
 format:
   html:
@@ -17,11 +17,6 @@ The data we are using in this exercise comes from a paper from Gravier et al. (2
 #| message: False
 
 library("tidyverse")
-<<<<<<< HEAD
-library("broom")  # devtools::install_github("tidymodels/broom")
-=======
-library("broom")
->>>>>>> f5301f1b0f76be88cf2924d1c80c5c8147f8f37d
 library("cowplot")
 ```
 
