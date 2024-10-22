@@ -55,6 +55,14 @@ Amy's section
 
 # s204655
 
+### New feature
+
+Hello world
+
+```{r}
+2+2
+```
+
 This is x
 
 ```{r}
