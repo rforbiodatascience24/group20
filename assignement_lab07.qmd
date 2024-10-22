@@ -59,7 +59,7 @@ gravier |> pluck("y") |> head()
 
 ## Cleaning data
 
-To be able to work with the data it needs to be cleaned. The data will be cleaned so each gene has its own column with the data as rows, and the 'y' column is renamed to early_metastasis, placed as the first column, and poor/good is changed to 1/0.
+To be able to work with the data it needs to be cleaned. The data will be cleaned so each gene has its own column with the data as rows.
 
 ```{r}
 gravier <- gravier |>
