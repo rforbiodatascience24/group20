@@ -1,28 +1,32 @@
 ---
 title: "Lab 6 Assignement: Group 20"
-author: Antoine Andréoletti (s242830), Olivier Gaufrès (243252), Amy Surry (201902), Lea Skytthe (s203531), Trine Søgaard (s204655)
+author: Antoine Andréoletti (s242830), Olivier Gaufrès (s243252), Amy Surry (s201902), Lea Skytthe (s203531), Trine Søgaard (s204655)
 format:
   html:
     embed-resources: true
 editor: visual
 ---
 
-## Data
-
-The data we are using in this exercise comes from a paper by Gravier et al. (2020) and is available here: <https://github.com/ramhiser/datamicroarray/raw/master/data/gravier.RData>.
-
 ## Load Libraries
 
 ```{r}
 #| message: False
+#| error: false
 
-library("tidyverse")
+library(tidyverse)
+library(broom)
+library(cowplot)
 ```
+
+## Data
+
+The data we are using in this exercise comes from a paper by Gravier et al. (2020) and is available here: <https://github.com/ramhiser/datamicroarray/raw/master/data/gravier.RData>.
 
 ## Load data
 
 ```{r}
 #| message: False
+#| error: false
 
 raw_dir <- "data/"
 data_file <- "gravier.RData"
@@ -39,4 +43,91 @@ if( !file.exists(str_c(raw_dir, data_file)) ){
 load(file = str_c(raw_dir, data_file))
 ```
 
-\
+Lets have a look at the data:
+
+```{r}
+gravier |> names()
+```
+
+```{r}
+gravier |> pluck("x") |> head()
+```
+
+```{r}
+gravier |> pluck("y") |> head()
+```
+
+## Cleaning data
+
+To be able to work with the data it needs to be cleaned. The data will be cleaned so each gene has its own column with the data as rows, and the 'y' column is renamed to early_metastasis, placed as the first column, and poor/good is changed to 1/0.
+
+```{r}
+gravier <- gravier |>
+  bind_cols() |>
+  as_tibble() |>
+  relocate(early_metastasis = y)
+
+gravier
+```
+
+## Look at the data in PC coordinates
+
+We start by running the PCA and storing the result in a variable `pca_fit`.
+
+As the `prcomp()` function only can deal with numeric columns, we need to remove all non-numeric columns from the data, and we want to scale the data values to unit variance before PCA.
+
+```{r}
+pca_fit <- gravier %>% 
+  select(where(is.numeric)) %>% # retain only numeric columns
+  prcomp(scale = TRUE) # do PCA on scaled data
+```
+
+Now, we want to plot the data in PC coordinates. In general, this means combining the PC coordinates with the original dataset, so we can color points by categorical variables present in the original data but removed for the PCA.
+
+```{r}
+pca_fit %>%
+  augment(gravier) %>% # add original dataset back in
+  ggplot(aes(.fittedPC1, .fittedPC2, color = early_metastasis)) + 
+  geom_point(size = 1.5) +
+  scale_color_manual(
+    values = c(poor = "#D55E00", good = "#0072B2")
+  ) +
+  theme_half_open(12) + 
+  background_grid() +
+  labs(x = "PC1", y = "PC2")
+```
+
+### Rotation matrix
+
+Next, we plot the rotation matrix.
+
+```{r}
+# extract rotation matrix
+pca_fit |>
+  tidy(matrix = "rotation")
+```
+
+## Look at the variance explained by each PC
+
+Finally, we’ll plot the variance explained by each PC.
+
+```{r}
+pca_fit %>%
+  tidy(matrix = "eigenvalues")
+```
+
+```{r}
+pca_fit %>%
+  tidy(matrix = "eigenvalues") %>%
+  ggplot(aes(PC, percent)) +
+  geom_col(fill = "#56B4E9", alpha = 0.8) +
+  scale_x_continuous(breaks = seq(1, 168, by = 5)) +
+  scale_y_continuous(
+    labels = scales::percent_format(),
+    expand = expansion(mult = c(0, 0.01))
+  ) +
+  theme_minimal_hgrid(12) +
+  theme(axis.text.x = element_text(size = 5))
+```
+
+The first component captures a little above 8% of the variation in the data
