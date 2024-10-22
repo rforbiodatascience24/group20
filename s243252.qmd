@@ -1,7 +1,0 @@
----
-title: "s243252"
-format: html
-editor: visual
----
-
-## First collaboration - s243252
