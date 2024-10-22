@@ -20,6 +20,12 @@ Jeg er Antoine
 print("Hello world")
 ```
 
+## New feature
+
+```{r}
+print("Jeg kommer fra Frankrig")
+```
+
 # s243252
 
 ### New feature - s243252
