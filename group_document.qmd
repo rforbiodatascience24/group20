@@ -12,6 +12,12 @@ jojojo captain here
 jubi <- 5
 ```
 
+## New analysis
+
+```{r}
+jubi <- 4
+```
+
 # s242830
 
 Jeg er Antoine
