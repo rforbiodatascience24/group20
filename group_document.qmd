@@ -8,6 +8,10 @@ editor: visual
 
 # s242830
 
+```{r}
+print("Hello world")
+```
+
 # s243252
 
 # s201902
