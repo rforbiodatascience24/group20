@@ -13,3 +13,17 @@ editor: visual
 # s201902
 
 # s204655
+
+This is x
+
+```{r}
+x <- 4
+cat("x is equal to", x)
+```
+
+And this is y
+
+```{r}
+y <- 8
+cat("y is equal to", y)
+```
