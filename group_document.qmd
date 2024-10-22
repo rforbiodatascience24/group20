@@ -6,11 +6,33 @@ editor: visual
 
 # s203531
 
+jojojo captain here
+
+```{r}
+jubi <- 5
+```
+
 # s242830
+
+```{r}
+print("Hello world")
+```
 
 # s243252
 
 # s201902
+
+Amy's section
+
+```{r}
+# code chunk
+2+2
+```
+
+```{r}
+# second code chunk
+3*6
+```
 
 # s204655
 
