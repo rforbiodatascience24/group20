@@ -9,7 +9,7 @@ editor: visual
 
 ## Data
 
-The data we are using in this exercise comes from a paper from Gravier et al. (2020) and is available here: <https://github.com/ramhiser/datamicroarray/raw/master/data/gravier.RData>.
+The data we are using in this exercise comes from a paper by Gravier et al. (2020) and is available here: <https://github.com/ramhiser/datamicroarray/raw/master/data/gravier.RData>.
 
 ## Load Libraries
 
