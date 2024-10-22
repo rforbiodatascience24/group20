@@ -22,6 +22,17 @@ print("Hello world")
 
 # s243252
 
+### New feature - s243252
+
+lorem ipsum
+
+```{r}
+#| echo: false
+#| label: s243252
+
+print("hello")
+```
+
 # s201902
 
 Amy's section
