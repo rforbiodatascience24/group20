@@ -1,6 +1,6 @@
 ---
-title: "Lab 6 Assignement: Group 20"
-author: Antoine Andréoletti (s242830), Olivier Gaufrès (243252), Amy Surry (201902), Lea Skytthe (s203531), Trine Søgaard (s204655)
+title: "Lab 7 Assignement: Group 20"
+author: Antoine Andréoletti (s242830), Olivier Gaufrès (s243252), Amy Surry (s201902), Lea Skytthe (s203531), Trine Søgaard (s204655)
 format:
   html:
     embed-resources: true
@@ -17,6 +17,8 @@ The data we are using in this exercise comes from a paper from Gravier et al. (2
 #| message: False
 
 library("tidyverse")
+library(broom)  # devtools::install_github("tidymodels/broom")
+library(cowplot)
 ```
 
 ## Load data
@@ -39,4 +41,82 @@ if( !file.exists(str_c(raw_dir, data_file)) ){
 load(file = str_c(raw_dir, data_file))
 ```
 
-\
+## Clean Data
+
+```{r}
+gravier_clean <- gravier |>
+  bind_cols() |>
+  as_tibble()
+
+```
+
+## Analysis - PCA
+
+### The data in PC coordinates
+
+We do a PCA of the gravier data and safe it in pca_fit.
+
+```{r}
+pca_fit <- gravier_clean |> 
+  select(where(is.numeric)) |> # retain only numeric columns
+  scale() |> # scale data
+  prcomp() # do PCA
+```
+
+```{r}
+pca_fit |>
+  augment(gravier_clean) |> # add original dataset back in
+  ggplot(aes(.fittedPC1, .fittedPC2, colour=y)) + 
+  geom_point() +
+  theme_half_open(12) + background_grid()
+```
+
+### The rotation matrix
+
+```{r}
+# extract rotation matrix
+pca_fit |>
+  tidy(matrix = "rotation")
+```
+
+```{r}
+# define arrow style for plotting
+arrow_style <- arrow(
+  angle = 20, ends = "first", type = "closed", length = grid::unit(8, "pt")
+)
+
+# plot rotation matrix
+pca_fit %>%
+  tidy(matrix = "rotation") %>%
+  pivot_wider(names_from = "PC", names_prefix = "PC", values_from = "value") %>%
+  ggplot(aes(PC1, PC2)) +
+  geom_segment(xend = 0, yend = 0, arrow = arrow_style) +
+  geom_text(
+    aes(label = column),
+    hjust = 1, nudge_x = -0.02, 
+    color = "#904C2F"
+  ) +
+  xlim(-1.25, .5) + ylim(-.5, 1) +
+  coord_fixed() + # fix aspect ratio to 1:1
+  theme_minimal_grid(12)
+```
+
+### The variance explained by each PC
+
+```{r}
+pca_fit %>%
+  tidy(matrix = "eigenvalues")
+```
+
+```{r}
+pca_fit %>%
+  tidy(matrix = "eigenvalues") %>%
+  ggplot(aes(PC, percent)) +
+  geom_col(fill = "#56B4E9", alpha = 0.8) +
+  scale_x_continuous(breaks = 1:9) +
+  scale_y_continuous(
+    labels = scales::percent_format(),
+    expand = expansion(mult = c(0, 0.01))
+  ) +
+  theme_minimal_hgrid(12)
+```
