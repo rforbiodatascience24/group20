@@ -41,11 +41,11 @@ if( !file.exists(str_c(raw_dir, data_file)) ){
 load(file = str_c(raw_dir, data_file))
 ```
 
-## s243252
-
-### clean data
+### Clean data
 
 ```{r}
+#| echo: false
+#| label: clean-data
 gravier_clean <- gravier |>
   bind_cols() |>
   as_tibble()
@@ -56,15 +56,23 @@ gravier_clean_aug <- gravier_clean |>
   relocate(early_metastasis = y)
 ```
 
-### pca plot
+## ALL THE GENES
+
+Using all the genes in the dataset.
+
+### Pca plot
 
 ```{r}
+#| echo: false
+#| label: all-pca-fit
 pca_fit <- gravier_clean_aug %>% 
   select(where(is.numeric)) %>% # retain only numeric columns
   prcomp(scale = TRUE) # do PCA on scaled data
 ```
 
 ```{r}
+#| echo: false
+#| label: all-pca-plot
 pca_fit %>%
   augment(gravier_clean) %>% # add original dataset back in
   ggplot(aes(.fittedPC1, .fittedPC2, color = y)) + 
@@ -75,15 +83,19 @@ pca_fit %>%
   theme_half_open(12) + background_grid()
 ```
 
-### look at pc coordinates
+### Look at pc coordinates
 
 ```{r}
+#| echo: false
+#| label: all-pca-coords
 # extract rotation matrix
 pca_fit %>%
   tidy(matrix = "rotation")
 ```
 
 ```{r}
+#| echo: false
+#| label: all-pca-coords-plot
 # define arrow style for plotting
 arrow_style <- arrow(
   angle = 20, ends = "first", type = "closed", length = grid::unit(8, "pt")
@@ -108,11 +120,15 @@ pca_fit %>%
 ## Look at the variance explained by each PC
 
 ```{r}
+#| echo: false
+#| label: all-pca-variance
 pca_fit %>%
   tidy(matrix = "eigenvalues")
 ```
 
 ```{r}
+#| echo: false
+#| label: all-pca-variance-plot
 pca_fit %>%
   tidy(matrix = "eigenvalues") %>%
   ggplot(aes(PC, percent)) +
@@ -127,14 +143,15 @@ pca_fit %>%
 
 The 2 first components captures respectively 8.27% and 0.68% of the variation in the data
 
-|     |              |         |         |     |
-|----:|-------------:|--------:|--------:|-----|
-|   1 | 1.550835e+01 | 0.08276 | 0.08276 |     |
-|   2 | 1.409243e+01 | 0.06834 | 0.15110 |     |
+## Using only significant genes
 
-### Using only significant genes
+See lecture 06 for more details.
+
+### Get significant genes
 
 ```{r}
+#| echo: false
+#| label: significant-pca-gene-selection
 genes <- colnames(gravier_clean_aug[-1])
 gravier_clean_aug_long <- gravier_clean_aug |> 
   pivot_longer(cols = all_of(genes),
@@ -168,9 +185,11 @@ gravier_significant <- gravier_clean |> select(all_of(significant_genes), y)
 
 ```
 
-PCA
+### PCA plot
 
 ```{r}
+#| echo: false
+#| label: significant-pca-plot
 pca_fit_significant <- gravier_significant %>% 
   select(where(is.numeric)) %>% # retain only numeric columns
   prcomp(scale = TRUE) # do PCA on scaled data
@@ -188,12 +207,16 @@ pca_fit_significant %>%
 ### look at pc coordinates
 
 ```{r}
+#| echo: false
+#| label: significant-pca-coords
 # extract rotation matrix
 pca_fit_significant %>%
   tidy(matrix = "rotation")
 ```
 
 ```{r}
+#| echo: false
+#| label: significant-pca-coords-plot
 # define arrow style for plotting
 arrow_style <- arrow(
   angle = 20, ends = "first", type = "closed", length = grid::unit(8, "pt")
@@ -218,11 +241,15 @@ pca_fit_significant %>%
 ## Look at the variance explained by each PC
 
 ```{r}
+#| echo: false
+#| label: significant-pca-variance
 pca_fit_significant %>%
   tidy(matrix = "eigenvalues")
 ```
 
 ```{r}
+#| echo: false
+#| label: significant-pca-variance-plot
 pca_fit_significant %>%
   tidy(matrix = "eigenvalues") %>%
   ggplot(aes(PC, percent)) +
@@ -234,3 +261,5 @@ pca_fit_significant %>%
   ) +
   theme_minimal_hgrid(12)
 ```
+
+The 2 first components captures respectively 44.13% and 15.47% of the variation in the data.
