@@ -1,5 +1,5 @@
 ---
-title: "Lab 6 Assignement: Group 20"
+title: "Lab 7 Assignement: Group 20"
 author: Antoine Andréoletti (s242830), Olivier Gaufrès (243252), Amy Surry (201902), Lea Skytthe (s203531), Trine Søgaard (s204655)
 format:
   html:
@@ -17,6 +17,8 @@ The data we are using in this exercise comes from a paper from Gravier et al. (2
 #| message: False
 
 library("tidyverse")
+library("broom")  
+library("cowplot")
 ```
 
 ## Load data
@@ -39,4 +41,57 @@ if( !file.exists(str_c(raw_dir, data_file)) ){
 load(file = str_c(raw_dir, data_file))
 ```
 
-\
+## Data wrangling
+
+```{r}
+set.seed(676571)
+cancer_data=mutate(as_tibble(pluck(gravier,"x")),y=pluck(gravier,"y"),pt_id=1:length(pluck(gravier, "y")),age=round(rnorm(length(pluck(gravier,"y")),mean=55,sd=10),1))
+cancer_data=rename(cancer_data,event_label=y)
+cancer_data$age_group=cut(cancer_data$age,breaks=seq(10,100,by=10))
+cancer_data=relocate(cancer_data,c(pt_id,age,age_group,pt_id,event_label))
+```
+
+## Data in PC coordinates
+
+We start by running the PCA and storing the result in a variable pca_fit
+
+```{r}
+pca_fit <- cancer_data |> 
+  select(where(is.numeric)) |> 
+  prcomp(scale = TRUE) # do PCA on scaled data
+```
+
+### Plot the data in PC coordinates
+
+Now, we want to plot the data in PC coordinates
+
+```{r}
+pca_fit %>%
+  augment(df) %>% # add original dataset back in
+  ggplot(aes(.fittedPC1, .fittedPC2, color = event_label)) + 
+  geom_point(size = 1.5) +
+  scale_color_manual(
+    values = c(poor = "#D55E00", good = "#0072B2")
+  ) +
+  theme_half_open(12) + background_grid()
+```
+
+## Look at the variance explained by each PC
+
+```{r}
+pca_fit %>%
+  tidy(matrix = "eigenvalues")
+```
+
+```{r}
+pca_fit %>%
+  tidy(matrix = "eigenvalues") %>%
+  ggplot(aes(PC, percent)) +
+  geom_col(fill = "#56B4E9", alpha = 0.8) +
+  scale_y_continuous(
+    labels = scales::percent_format(),
+    expand = expansion(mult = c(0, 0.01))
+  ) +
+  theme_minimal_hgrid(12)
+
+```
