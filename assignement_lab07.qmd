@@ -1,0 +1,30 @@
+---
+title: "Lab 6 Assignement: Group 20"
+author: Antoine Andréoletti, Olivier Gaufrès, Amy Surry, Lea Skytthe, Trine Søgaard
+format:
+  html:
+    embed-resources: true
+editor: visual
+---
+
+## Data
+
+The data we are using in this exercise comes from a paper from Gravier et al. (2020) and is available here: <https://github.com/ramhiser/datamicroarray/raw/master/data/gravier.RData>.
+
+## Load Libraries
+
+```{r}
+#| message: False
+
+library("tidyverse")
+library("broom")
+library("ggrepel")
+```
+
+## Load data
+
+```{r}
+#| message: False
+
+biopsy <- read_csv("https://wilkelab.org/classes/SDS348/data_sets/biopsy.csv")
+```
