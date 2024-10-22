@@ -12,4 +12,16 @@ editor: visual
 
 # s201902
 
+Amy's section
+
+```{r}
+# code chunk
+2+2
+```
+
+```{r}
+# second code chunk
+3*6
+```
+
 # s204655
