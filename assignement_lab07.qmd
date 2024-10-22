@@ -17,6 +17,8 @@ The data we are using in this exercise comes from a paper from Gravier et al. (2
 #| message: False
 
 library("tidyverse")
+library("broom")
+library("cowplot")
 ```
 
 ## Load data
