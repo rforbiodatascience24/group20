@@ -1,5 +1,7 @@
+## 
+
 ---
-title: "Lab 6 Assignement: Group 20"
+title: "Lab 7 Assignement: Group 20"
 author: Antoine Andréoletti (s242830), Olivier Gaufrès (243252), Amy Surry (201902), Lea Skytthe (s203531), Trine Søgaard (s204655)
 format:
   html:
@@ -17,7 +19,6 @@ The data we are using in this exercise comes from a paper from Gravier et al. (2
 #| message: False
 
 library("tidyverse")
-library("broom")
 library("cowplot")
 ```
 
@@ -56,84 +57,47 @@ gravier_clean_aug <- gravier_clean |>
   relocate(early_metastasis = y)
 ```
 
-## ALL THE GENES
+## Analyse data
 
-Using all the genes in the dataset.
-
-### Pca plot
+We convert the data to tibble
 
 ```{r}
-#| echo: false
-#| label: all-pca-fit
-pca_fit <- gravier_clean_aug %>% 
-  select(where(is.numeric)) %>% # retain only numeric columns
+gravier_tibble <- gravier |>
+  bind_cols() |> 
+  as_tibble()
+```
+
+## Look at the data in PC coordinates
+
+We start by running the PCA and storing the result in a variable `pca_fit`. There are two issues to consider here. First, the `prcomp()` function can only deal with numeric columns, so we need to remove all non-numeric columns from the data. This is straightforward using the `where(is.numeric)` tidyselect construct. Second, we normally want to scale the data values to unit variance before PCA. We do so by using the argument `scale = TRUE` in `prcomp()`.
+
+```{r}
+pca_fit <- gravier_tibble |> 
+  select(where(is.numeric))  |>  # retain only numeric columns
   prcomp(scale = TRUE) # do PCA on scaled data
 ```
 
+Now, we want to plot the data in PC coordinates. In general, this means combining the PC coordinates with the original dataset, so we can color points by categorical variables present in the original data but removed for the PCA.
+
 ```{r}
-#| echo: false
-#| label: all-pca-plot
-pca_fit %>%
-  augment(gravier_clean) %>% # add original dataset back in
-  ggplot(aes(.fittedPC1, .fittedPC2, color = y)) + 
+pca_fit |> 
+  augment(gravier_tibble) |> 
+  ggplot(aes(x = .fittedPC1, y = .fittedPC2, color = y)) + 
   geom_point(size = 1.5) +
-  scale_color_manual(
-    values = c(poor = "#D55E00", good = "#0072B2")
-  ) +
-  theme_half_open(12) + background_grid()
-```
-
-### Look at pc coordinates
-
-```{r}
-#| echo: false
-#| label: all-pca-coords
-# extract rotation matrix
-pca_fit %>%
-  tidy(matrix = "rotation")
-```
-
-```{r}
-#| echo: false
-#| label: all-pca-coords-plot
-# define arrow style for plotting
-arrow_style <- arrow(
-  angle = 20, ends = "first", type = "closed", length = grid::unit(8, "pt")
-)
-
-# plot rotation matrix
-pca_fit %>%
-  tidy(matrix = "rotation") %>%
-  pivot_wider(names_from = "PC", names_prefix = "PC", values_from = "value") %>%
-  ggplot(aes(PC1, PC2)) +
-  geom_segment(xend = 0, yend = 0, arrow = arrow_style) +
-  geom_text(
-    aes(label = column),
-    hjust = 1, nudge_x = -0.02, 
-    color = "#904C2F"
-  ) +
-  xlim(-1.25, .5) + ylim(-.5, 1) +
-  coord_fixed() + # fix aspect ratio to 1:1
-  theme_minimal_grid(12)
+  labs(color = "Condition",
+       x = "PC1",
+       y = "PC2")
 ```
 
 ## Look at the variance explained by each PC
 
-```{r}
-#| echo: false
-#| label: all-pca-variance
-pca_fit %>%
-  tidy(matrix = "eigenvalues")
-```
+Finally, we’ll plot the variance explained by each PC. We can again extract this information using the `tidy()` function from broom, now by setting the `matrix` argument to `matrix = "eigenvalues"`.
 
 ```{r}
-#| echo: false
-#| label: all-pca-variance-plot
 pca_fit %>%
   tidy(matrix = "eigenvalues") %>%
   ggplot(aes(PC, percent)) +
   geom_col(fill = "#56B4E9", alpha = 0.8) +
-  scale_x_continuous(breaks = 1:9) +
   scale_y_continuous(
     labels = scales::percent_format(),
     expand = expansion(mult = c(0, 0.01))
@@ -141,7 +105,11 @@ pca_fit %>%
   theme_minimal_hgrid(12)
 ```
 
-The 2 first components captures respectively 8.27% and 0.68% of the variation in the data
+## Conclusion
+
+In the gravier dataset, we have too many genes to extract relevant information with PCA. We should probably extract only significant genes first and repeat the same analysis.
+
+### 
 
 ## Using only significant genes
 
