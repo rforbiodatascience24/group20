@@ -17,7 +17,11 @@ The data we are using in this exercise comes from a paper from Gravier et al. (2
 #| message: False
 
 library("tidyverse")
+<<<<<<< HEAD
 library("broom")  # devtools::install_github("tidymodels/broom")
+=======
+library("broom")
+>>>>>>> f5301f1b0f76be88cf2924d1c80c5c8147f8f37d
 library("cowplot")
 ```
 
