@@ -1,6 +1,6 @@
 ---
 title: "Lab 6 Assignement: Group 20"
-author: Antoine Andréoletti, Olivier Gaufrès, Amy Surry, Lea Skytthe, Trine Søgaard
+author: Antoine Andréoletti (s242830), Olivier Gaufrès (243252), Amy Surry (201902), Lea Skytthe (s203531), Trine Søgaard (s204655)
 format:
   html:
     embed-resources: true
@@ -9,9 +9,7 @@ editor: visual
 
 ## Data
 
-We’ll be analyzing the `biopsy` dataset, which comes originally from the MASS package. It is a breast cancer dataset from the University of Wisconsin Hospitals, Madison from Dr. William H. Wolberg. He assessed biopsies of breast tumors for 699 patients; each of nine attributes was scored on a scale of 1 to 10. The true outcome (benign/malignant) is also known.
-
-The data is available there: <https://wilkelab.org/classes/SDS348/data_sets/biopsy.csv>
+The data we are using in this exercise comes from a paper from Gravier et al. (2020) and is available here: <https://github.com/ramhiser/datamicroarray/raw/master/data/gravier.RData>.
 
 ## Load Libraries
 
@@ -26,5 +24,19 @@ library("tidyverse")
 ```{r}
 #| message: False
 
-biopsy <- read_csv("https://wilkelab.org/classes/SDS348/data_sets/biopsy.csv")
+raw_dir <- "data/"
+data_file <- "gravier.RData"
+data_loc <- "https://github.com/ramhiser/datamicroarray/raw/master/data/"
+
+if( !dir.exists(raw_dir) ){
+  dir.create(path = raw_dir)
+}
+if( !file.exists(str_c(raw_dir, data_file)) ){
+  download.file(
+    url = str_c(data_loc, data_file),
+    destfile = str_c(raw_dir, data_file))
+}
+load(file = str_c(raw_dir, data_file))
 ```
+
+\
