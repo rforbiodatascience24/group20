@@ -6,6 +6,12 @@ editor: visual
 
 # s203531
 
+jojojo captain here
+
+```{r}
+jubi <- 5
+```
+
 # s242830
 
 # s243252
