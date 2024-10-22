@@ -53,6 +53,19 @@ Amy's section
 3*6
 ```
 
+## New Analysis
+
+New analysis...
+
+```{r}
+cats <- 2
+dogs <- 5
+```
+
+```{r}
+print(paste("There are",cats,"cats and",dogs,"dogs"))
+```
+
 # s204655
 
 ### New feature
